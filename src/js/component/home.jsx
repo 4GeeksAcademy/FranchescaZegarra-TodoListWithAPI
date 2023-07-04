@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Form from "./form.jsx";
 import Task from "./task.jsx";
 import TaskNumber from "./taskNumber.jsx";
@@ -8,32 +8,69 @@ import TaskNumber from "./taskNumber.jsx";
 const Home = () => {
 	const [tasks, setTasks] = useState([]);
 	const [numberOfTask, setNumberOfTask] = useState(0);
-	
-	const addTask = (task) => {
-		const actualTaks = [...tasks, task];
-		setTasks(actualTaks);
-		setNumberOfTask(actualTaks.length);
+
+	const getOption = {
+		method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			/*PARAMS: none*/
 	}
 
-	const deleteTask = (id) => {
-		const actualTaks = tasks.filter(task => task.id !== id);
-		setTasks(actualTaks);
-		setNumberOfTask(actualTaks.length);
-	}	
+	let body = [
+		{label: "tarea uno", done:false}
+	];
+
+	const putOption = {
+		method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+		body: JSON.stringify(body)
+	}
+
+	useEffect( () => {
+		fetch('http://assets.breatheco.de/apis/fake/todos/user/khrisefzm', getOption)
+		.then(resp => {
+			return resp.json();
+		})
+		.then(resp => {
+			console.log(resp);
+		})
+		.catch(err => {
+			console.log("user does not exist");
+		})
+
+		fetch('http://assets.breatheco.de/apis/fake/todos/user/khrisefzm', putOption)
+		.then(resp => {
+			return resp.json();
+		})
+		.then(resp => {
+			console.log(resp);
+		})
+		.catch(err => {
+			console.log("error");
+		})
+	}, [])	
+
+	const [input, setInput] = useState("no name");
+	const inputValue = e => {
+		setInput(e.target.value);
+	};
+
+	const sentForm = e => {
+		let user = input;
+		console.log(user);
+		return user;
+	};
+	
 
 	return (
-		<div className="container mt-5 ">
-			<div className="col-lg-6 col-sm-12 col-md-10 bg-light p-2 m-auto border">
-				<Form onSubmit={addTask}/>
-				{
-					tasks.map((task) => (
-						<Task key={task.id} id={task.id} text={task.text} deleteTask={deleteTask}/>
-					))
-				}
-				<TaskNumber number={numberOfTask}/>
-			</div>
+		<div className="container">
+			
 		</div>
+			
 	);
-};
+}
 
 export default Home;
