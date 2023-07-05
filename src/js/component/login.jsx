@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 
 function Login ({children, loadTask, addUser, url}) {
        
@@ -62,8 +62,7 @@ function Login ({children, loadTask, addUser, url}) {
         option.body = JSON.stringify([{label: "sample", done: false}]);
 
         fetch(`${url}${user}`,option)
-        .then( response =>{
-            
+        .then( response =>{      
             return response.JSON;
         })
         .then( response => {
