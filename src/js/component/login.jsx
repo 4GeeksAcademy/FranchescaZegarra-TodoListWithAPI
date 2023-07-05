@@ -8,6 +8,7 @@ function Login ({children, loadTask, addUser, url}) {
     const inputValue = e => {
         setInput(e.target.value);
     }
+
     const verifyUser = e => {
         e.preventDefault();
         addUser("");
@@ -32,7 +33,7 @@ function Login ({children, loadTask, addUser, url}) {
             return response.json();
         })
         .then (result => {
-            loadTask(result);
+            loadTask(result); //Father's function
         })
         .catch(error => console.log(error))
     }
@@ -40,32 +41,36 @@ function Login ({children, loadTask, addUser, url}) {
     const createUser = e => {
         e.preventDefault();
         let user = input;
+        let bodyArray = [];
         
-        let option = {
+        fetch(`${url}${user}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify([])
-        };
-
-        fetch(`${url}${user}`,option)
-        .then( response =>{
-            return response.JSON;
+            body: JSON.stringify(bodyArray)
         })
         .then( response => {
-            console.log(response);
+            return response.json();
+        })
+        .then( result => {
+            console.log("Dentro del método POST")
+            console.log(result);
         } )
         .catch(error => console.log(error));
 
-        option.method = "PUT";
-        option.body = JSON.stringify([{label: "sample", done: false}]);
-
-        fetch(`${url}${user}`,option)
+        fetch(`${url}${user}`,{
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify([{label: "sample", done: false}])
+        })
         .then( response =>{      
-            return response.JSON;
+            return response.json();
         })
         .then( response => {
+            console.log("Dentro del método PUT")
             console.log(response);
         } )
         .catch(error => console.log(error));
@@ -83,9 +88,12 @@ function Login ({children, loadTask, addUser, url}) {
                     showComponent ? <p className="text-danger">There is not a User with that name, please create one</p> : <></>
                 }
                 <div className="row">
-                    <button type="submit" className="btn btn-success col-3 m-2" onClick={verifyUser}>Log In</button>
                     {
-                        showComponent ? <button type="submit" className="btn btn-primary col-3 m-2" onClick={createUser}>Create User</button> : <></>
+                        !showComponent ? <button type="submit" className="btn btn-success col-3 m-2" onClick={verifyUser}>Log In</button>: <></>
+                    }
+
+                    {
+                        showComponent ? <button type="button" className="btn btn-primary col-3 m-2" onClick={createUser}>Create User</button> : <></>
                     }
                 </div>
                 {
