@@ -1,15 +1,74 @@
 import React, { useState, useEffect } from "react";
-/*import Form from "./form.jsx";
+import Form from "./form.jsx";
 import Task from "./task.jsx";
-import TaskNumber from "./taskNumber.jsx";*/
 import Login from "./login.jsx";
+import DeleteButton from "./deleteButton.jsx";
 
 //create your first component
-
 const Home = () => {
+	const url = "https://assets.breatheco.de/apis/fake/todos/user/";
+	const [tasks, setTasks] = useState([]);
+	const [user, setUser] = useState("");
+
+	const addUser = (user) => {
+		setUser(user);
+	}
+	
+	const loadTask = (task) => { //task is an array with objects
+		setTasks(task);
+		console.log(tasks);
+	}
+
+	const addTask = (task) => {
+		let newTasks = [...tasks, task];
+		setTasks(newTasks);
+	}
+
+	const deleteTask = (text) => {
+		let newTasks = tasks.filter(element => element.label!=text)
+		setTasks(newTasks);
+		console.log(newTasks);
+	}
+
+	fetch(`${url}${user}`,{
+		method: "PUT",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(tasks)
+	})
+	.then(response => {return response.JSON})
+	.then(response => console.log(response))
+	.catch(error=> console.log(error))
+
+	const deleteAllTask = () => {
+		setTasks([]);
+		fetch(`${url}${user}`,{
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+		.then(response => {return response.JSON})
+		.then(response => console.log(response))
+		.catch(error=> console.log(error))
+	}
+
+	console.log(tasks)
 	return (
 		<div className="container">
-			<Login />
+			<Login loadTask={loadTask} addUser={addUser} url={url}>
+				<Form addTask={addTask} url={url} user={user}/>
+				{user != "" && tasks !=[] ? 
+					tasks.map((element, key) => {
+						return (
+							<Task key={key} text={element.label} deleteTask={deleteTask}/>
+						);
+					})
+					: <></>
+				}
+				<DeleteButton deleteAllTask={deleteAllTask}/>
+			</Login>
 		</div>	
 	)
 }
