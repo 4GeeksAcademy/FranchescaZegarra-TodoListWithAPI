@@ -11,8 +11,8 @@ function Form(props) {
     const sentForm = e => {
         e.preventDefault();
         const newTask = {
-            id: uuidv4(), // To generate unque id automatically
-            text: input
+            label: input,
+            done:false
         };
         props.onSubmit(newTask);
     };
